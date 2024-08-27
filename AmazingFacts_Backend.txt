@@ -1,0 +1,161 @@
+const Alexa = require('ask-sdk-core');
+
+const facts = {
+    technology: [
+        "The first computer virus was created in 1983 and was called the Elk Cloner.",
+        "The first 1GB hard drive, introduced in 1980, weighed over 500 pounds and cost $40,000.",
+        "The first computer mouse was made of wood and was invented in 1964."
+    ],
+    space: [
+        "A day on Venus is longer than a year on Venus.",
+        "The footprints on the Moon will remain there for millions of years.",
+        "Jupiter has 79 moons."
+    ],
+    humans: [
+        "The human brain can generate enough electricity to power a small light bulb.",
+        "The strongest muscle in the human body is the masseter, or jaw muscle.",
+        "Humans share about 60% of their DNA with bananas."
+    ],
+    animals: [
+        "A group of flamingos is called a 'flamboyance'.",
+        "Octopuses have three hearts and blue blood.",
+        "Dolphins sleep with one eye open."
+    ]
+};
+
+const LaunchRequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
+    },
+    handle(handlerInput) {
+        const speakOutput = 'Welcome to Amazing Facts! You can ask me to tell you a fact about technology, space, humans, or animals.';
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
+const GetFactIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) === 'GetFactIntent';
+    },
+    handle(handlerInput) {
+        const topicSlot = Alexa.getSlotValue(handlerInput.requestEnvelope, 'Topic');
+        const topic = topicSlot ? topicSlot.toLowerCase() : null;
+
+        let factList = facts[topic];
+        let speakOutput;
+
+        if (factList) {
+            const randomFact = factList[Math.floor(Math.random() * factList.length)];
+            speakOutput = `Here's a fact about ${topic}: ${randomFact}`;
+        } else {
+            speakOutput = `I'm sorry, I don't have any facts about ${topic}. Please ask me about technology, space, humans, or animals.`;
+        }
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt('You can ask for another fact by saying, tell me a fact about technology, space, humans, or animals.')
+            .getResponse();
+    }
+};
+
+const HelpIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
+    },
+    handle(handlerInput) {
+        const speakOutput = 'You can ask me to tell you a fact about technology, space, humans, or animals.';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
+const CancelAndStopIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+            (Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent' ||
+                Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
+    },
+    handle(handlerInput) {
+        const speakOutput = 'Goodbye!';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .getResponse();
+    }
+};
+
+const FallbackIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.FallbackIntent';
+    },
+    handle(handlerInput) {
+        const speakOutput = 'Sorry, I don\'t know that. You can ask me to tell you a fact about technology, space, humans, or animals.';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
+const SessionEndedRequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest';
+    },
+    handle(handlerInput) {
+        return handlerInput.responseBuilder.getResponse();
+    }
+};
+
+const IntentReflectorHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest';
+    },
+    handle(handlerInput) {
+        const intentName = Alexa.getIntentName(handlerInput.requestEnvelope);
+        const speakOutput = `You just triggered ${intentName}`;
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .getResponse();
+    }
+};
+
+const ErrorHandler = {
+    canHandle() {
+        return true;
+    },
+    handle(handlerInput, error) {
+        const speakOutput = 'Sorry, I had trouble doing what you asked. Please try again.';
+        console.log(`~~~~ Error handled: ${error.message}`);
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
+exports.handler = Alexa.SkillBuilders.custom()
+    .addRequestHandlers(
+        LaunchRequestHandler,
+        GetFactIntentHandler,
+        HelpIntentHandler,
+        CancelAndStopIntentHandler,
+        FallbackIntentHandler,
+        SessionEndedRequestHandler,
+        IntentReflectorHandler
+    )
+    .addErrorHandlers(
+        ErrorHandler
+    )
+    .lambda();

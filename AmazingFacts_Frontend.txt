@@ -1,0 +1,94 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "amazing facts",
+            "intents": [
+                {
+                    "name": "GetFactIntent",
+                    "slots": [
+                        {
+                            "name": "Topic",
+                            "type": "FactTopic"
+                        }
+                    ],
+                    "samples": [
+                        "tell me a {Topic} fact",
+                        "give me a fact about {Topic}",
+                        "I want to hear a {Topic} fact",
+                        "give me a {Topic} fact",
+                        "tell me something about {Topic}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": [
+                        "help",
+                        "what can I do"
+                    ]
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": [
+                        "cancel"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": [
+                        "stop",
+                        "exit"
+                    ]
+                },
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "GetFact",
+                    "slots": [
+                        {
+                            "name": "Category",
+                            "type": "FactTopic"
+                        }
+                    ],
+                    "samples": [
+                        "Tell me a {Category} fact",
+                        "give me a fact about {Category}",
+                        "I want a fact about {Category}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "FactTopic",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "technology"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "space"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "humans"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "animals"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
